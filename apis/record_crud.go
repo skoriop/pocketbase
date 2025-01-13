@@ -52,7 +52,6 @@ func recordsList(e *core.RequestEvent) error {
 	if collection.ListRule == nil && !requestInfo.HasSuperuserAuth() {
 		return e.ForbiddenError("Only superusers can perform this action.", nil)
 	}
-
 	// forbid users and guests to query special filter/sort fields
 	err = checkForSuperuserOnlyRuleFields(requestInfo)
 	if err != nil {
