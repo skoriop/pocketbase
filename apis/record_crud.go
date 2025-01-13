@@ -63,7 +63,7 @@ func recordsList(e *core.RequestEvent) error {
 
 	fieldsResolver := core.NewRecordFieldResolver(e.App, collection, requestInfo, true)
 
-	if !requestInfo.HasSuperuserAuth() && collection.ListRule != nil && *collection.ListRule != "" {
+	if collection.ListRule != nil && *collection.ListRule != "" {
 		expr, err := search.FilterData(*collection.ListRule).BuildExpr(fieldsResolver)
 		if err != nil {
 			return err
@@ -160,7 +160,7 @@ func recordView(e *core.RequestEvent) error {
 	}
 
 	ruleFunc := func(q *dbx.SelectQuery) error {
-		if !requestInfo.HasSuperuserAuth() && collection.ViewRule != nil && *collection.ViewRule != "" {
+		if collection.ViewRule != nil && *collection.ViewRule != "" {
 			resolver := core.NewRecordFieldResolver(e.App, collection, requestInfo, true)
 			expr, err := search.FilterData(*collection.ViewRule).BuildExpr(resolver)
 			if err != nil {
@@ -263,7 +263,7 @@ func recordCreate(optFinalizer func(data any) error) func(e *core.RequestEvent) 
 			form.SetRecord(e.Record)
 
 			// temporary save the record and check it against the create and manage rules
-			if !hasSuperuserAuth && e.Collection.CreateRule != nil {
+			if e.Collection.CreateRule != nil {
 				dummyRecord := e.Record.Clone()
 
 				dummyRandomPart := "__pb_create__" + security.PseudorandomString(6)
@@ -417,7 +417,7 @@ func recordUpdate(optFinalizer func(data any) error) func(e *core.RequestEvent) 
 		requestInfo.Body = data
 
 		ruleFunc := func(q *dbx.SelectQuery) error {
-			if !hasSuperuserAuth && collection.UpdateRule != nil && *collection.UpdateRule != "" {
+			if collection.UpdateRule != nil && *collection.UpdateRule != "" {
 				resolver := core.NewRecordFieldResolver(e.App, collection, requestInfo, true)
 				expr, err := search.FilterData(*collection.UpdateRule).BuildExpr(resolver)
 				if err != nil {
@@ -531,7 +531,7 @@ func recordDelete(optFinalizer func(data any) error) func(e *core.RequestEvent) 
 		}
 
 		ruleFunc := func(q *dbx.SelectQuery) error {
-			if !requestInfo.HasSuperuserAuth() && collection.DeleteRule != nil && *collection.DeleteRule != "" {
+			if collection.DeleteRule != nil && *collection.DeleteRule != "" {
 				resolver := core.NewRecordFieldResolver(e.App, collection, requestInfo, true)
 				expr, err := search.FilterData(*collection.DeleteRule).BuildExpr(resolver)
 				if err != nil {
